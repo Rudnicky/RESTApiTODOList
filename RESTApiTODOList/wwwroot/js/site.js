@@ -1,5 +1,5 @@
 ﻿
-// api call to get list of todos
+// GET ALL
 function getTodos() {
     $.ajax({
         url: '/api/todo/',
@@ -11,22 +11,37 @@ function getTodos() {
     });
 }
 
-// foo which creates divs with given list
-// from the ajax call
+// GET ALL foo
 function appendTodos(todos) {
+
+    // get containers from html
+    var comboBox = document.getElementById('selectItemsComboBox');
     var mainContainer = document.getElementById("todoContainer");
+
+    // clear it's content
+    comboBox.options.length = 0;
     mainContainer.innerHTML = "";
 
+    // go through each retrieved object 
+    // create div list for each of them
+    // and add these objects to combobox
     for (var i = 0; i < todos.length; i++) {
+
+        // creates divs with btns
         var div = document.createElement("div");
         var currentTaskId = todos[i].id;
         div.innerHTML = 'Task: ' + todos[i].name + '<input type="button" value="X" onClick="deleteTodo(\'' + currentTaskId + '\')" />';
         mainContainer.appendChild(div);
+
+        // appending items to the combobox
+        var opt = document.createElement('option');
+        opt.appendChild(document.createTextNode(todos[i].name));
+        opt.value = 'option value';
+        comboBox.appendChild(opt);
     }
 }
 
-// function that's making a post call through ajax
-// and deletes tapped item by given id
+// DELETE 
 function deleteTodo(id) {
     var ans = confirm("Are you sure you want to delete this Todo item?");
     if (ans) {
@@ -46,8 +61,7 @@ function deleteTodo(id) {
     }  
 }
 
-// this is kind of callback
-// for the given id form
+// POST
 $(function () {
     $('#add-todo-form').on("submit", function (e) {
         e.preventDefault(); 
