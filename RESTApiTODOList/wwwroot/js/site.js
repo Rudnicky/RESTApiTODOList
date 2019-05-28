@@ -1,60 +1,79 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-function productList() {
-    // Call Web API to get a list of Product
+﻿
+// api call to get list of todos
+function getTodos() {
     $.ajax({
         url: '/api/todo/',
         type: 'GET',
         dataType: 'json',
-        success: function (products) {
-            productListSuccess(products);
-        },
-        error: function (request, message, error) {
-            handleException(request, message, error);
+        success: function (todoItems) {
+            appendTodos(todoItems);
         }
     });
 }
 
-function productListSuccess(products) {
-    // Iterate over the collection of data
-    $.each(products, function (index, product) {
-        // Add a row to the Product table
-        productAddRow(product);
+// foo which creates divs with given list
+// from the ajax call
+function appendTodos(todos) {
+    var mainContainer = document.getElementById("todoContainer");
+    mainContainer.innerHTML = "";
+
+    for (var i = 0; i < todos.length; i++) {
+        var div = document.createElement("div");
+        var currentTaskId = todos[i].id;
+        div.innerHTML = 'Task: ' + todos[i].name + '<input type="button" value="X" onClick="deleteTodo(\'' + currentTaskId + '\')" />';
+        mainContainer.appendChild(div);
+    }
+}
+
+// function that's making a post call through ajax
+// and deletes tapped item by given id
+function deleteTodo(id) {
+    var ans = confirm("Are you sure you want to delete this Todo item?");
+    if (ans) {
+        $.ajax({
+            url: "/api/todo/" + id,
+            type: "POST",
+            method: "DELETE",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function () {
+                getTodos();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }  
+}
+
+// this is kind of callback
+// for the given id form
+$(function () {
+    $('#add-todo-form').on("submit", function (e) {
+        e.preventDefault(); 
+
+        var todoName = $("[name='name']").val();
+        var dataToPost = { Name: todoName };
+
+        $.ajax(
+            {
+                type: "POST",
+                data: JSON.stringify(dataToPost),
+                url: "/api/todo/",
+                contentType: 'application/json; charset=utf-8',
+                success: function () {
+                    getTodos();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
     });
-}
+});
 
-function productAddRow(product) {
-    // Check if <tbody> tag exists, add one if not
-    if ($("#productTable tbody").length == 0) {
-        $("#productTable").append("<tbody></tbody>");
-    }
-    // Append row to <table>
-    $("#productTable tbody").append(
-        productBuildTableRow(product));
-}
-
-function productBuildTableRow(product) {
-    var ret =
-        "<tr>" +
-        "<td>" + product.ProductName + "</td>" +
-        "</tr>";
-    return ret;
-}
-
-function handleException(request, message,
-    error) {
-    var msg = "";
-    msg += "Code: " + request.status + "\n";
-    msg += "Text: " + request.statusText + "\n";
-    if (request.responseJSON != null) {
-        msg += "Message" +
-            request.responseJSON.Message + "\n";
-    }
-    alert(msg);
-}
-
+// this will make getTodos() run once
+// the page is loaded.
 $(document).ready(function () {
-    productList();
+    debugger
+    getTodos();
 });

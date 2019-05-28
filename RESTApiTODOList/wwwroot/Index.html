@@ -8,87 +8,18 @@
 </head>
 <body>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6">
-                <h4>TODO(s)</h4>
-            </div>
-        </div>
+    <h3>TODO(s)</h3>
+    <div>
+        <div id="todoContainer"></div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-6">
-            <table id="todosTable" class="table table-bordered table-condensed table-striped">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
+    <h3>Add TODO</h3>
+    <form id="add-todo-form">
+        Task
+        <input type="text" name="name" />
+        <input type="submit" value="Submit" />
+    </form>
 
-    <script>
-          // Handle click event on Update button
-          function updateClick() {
-          }
-          // Handle click event on Add button
-          function addClick() {
-        }
-
-        function todosList() {
-          // Call Web API to get a list of Todo(s)
-          $.ajax({
-            url: '/api/todo/',
-            type: 'GET',
-            dataType: 'json',
-            success: function (todoItems) {
-              todosListSuccess(todoItems);
-            }
-          });
-        }
-
-        function todosListSuccess(todoItems) {
-          // Iterate over the collection of data
-          $.each(todoItems, function (todoItem) {
-            // Add a row to the Todo table
-            todoAddRow(todoItem);
-          });
-        }
-
-        function todoAddRow(todoItem) {
-         // Check if <tbody> tag exists, add one if not
-          if ($("#todosTable tbody").length == 0) {
-           $("#todosTable").append("<tbody></tbody>");
-          }
-          // Append row to <table>
-          $("#todosTable tbody").append(
-            todosBuildTableRow(todoItem));
-        }
-
-        function todosBuildTableRow(todoItem) {
-          var ret =
-            "<tr>" +
-             "<td>" + todoItem.Name + "</td>" +
-            "</tr>";
-          return ret;
-}
-
-        function handleException(request, message, error) {
-          var msg = "";
-          msg += "Code: " + request.status + "\n";
-          msg += "Text: " + request.statusText + "\n";
-          if (request.responseJSON != null) {
-            msg += "Message" +
-                request.responseJSON.Message + "\n";
-          }
-          alert(msg);
-        }
-
-        $(document).ready(function () {
-          todosList();
-        });
-
-    </script>
+    <script src="js/site.js"></script>
 </body>
 </html>
