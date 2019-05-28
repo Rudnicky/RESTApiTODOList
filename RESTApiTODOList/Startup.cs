@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RESTApiTODOList.Core.Interfaces;
 using RESTApiTODOList.Persistence;
+using RESTApiTODOList.Persistence.Repositories;
 
 namespace RESTApiTODOList
 {
@@ -22,7 +24,7 @@ namespace RESTApiTODOList
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TodoDbContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-
+            
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -32,6 +34,9 @@ namespace RESTApiTODOList
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // Let services know how to resolve dependencies
+            services.AddScoped<ITodoRepository, TodoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
