@@ -23,9 +23,14 @@ namespace RESTApiTODOList.Controllers
 
         // GET: api/Todo
         [HttpGet]
-        public IEnumerable<TodoItem> GetAll()
+        public ActionResult<IEnumerable<TodoItem>> GetAll()
         {
-            return _todoRepository.GetAll();
+            var listOfTodos = _todoRepository.GetAll().ToList();
+            if (listOfTodos != null && listOfTodos.Count > 0)
+            {
+                return Ok(_todoRepository.GetAll());
+            }
+            return NotFound();
         }
 
         // GET: api/Todo/5
