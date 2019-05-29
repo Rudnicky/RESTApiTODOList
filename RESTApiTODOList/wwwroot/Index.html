@@ -1,14 +1,36 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-    <h3>TODO(s)</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <h2>TODO(s)</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <table id="todoTable" class="table table-bordered table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th>Edit</th>
+                        <th>Id</th>
+                        <th>Task Description</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
     <div>
         <div id="todoContainer"></div>
     </div>

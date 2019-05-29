@@ -11,7 +11,6 @@ function getTodos() {
     });
 }
 
-// GET ALL foo
 function appendTodos(todos) {
 
     // get containers from html
@@ -40,7 +39,34 @@ function appendTodos(todos) {
         opt.appendChild(document.createTextNode(todos[i].name));
         opt.value = todos[i].id;
         comboBox.appendChild(opt);
+
+        // temp
+        todoAddRow(todos[i]);
     }
+}
+
+function todoAddRow(todo) {
+    // Check if <tbody> tag exists, add one if not
+    if ($("#todoTable tbody").length == 0) {
+        $("#todoTable").append("<tbody></tbody>");
+    }
+    // Append row to <table>
+    $("#todoTable tbody").append(
+        todoBuildTableRow(todo));
+}
+
+function todoBuildTableRow(todo) {
+    var ret =
+        "<tr>" +
+        "<td>" + "<button type='button' " +
+                    "onclick='todoGet(this);' " +
+                    "class='btn btn-default' " +
+                    "data-id='" + todo.id + "'>" +
+                    "<span class='glyphicon glyphicon-edit' />" + "</button>" + "</td >" +
+        "<td>" + todo.id + "</td>" +
+        "<td>" + todo.name + "</td>" +
+        "</tr>";
+    return ret;
 }
 
 // DELETE 

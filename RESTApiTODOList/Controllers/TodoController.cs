@@ -10,7 +10,7 @@ namespace RESTApiTODOList.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TodoController : ControllerBase
+    public class TodoController : Controller
     {
         private readonly ITodoRepository _todoRepository;
 

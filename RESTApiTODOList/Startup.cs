@@ -51,8 +51,8 @@ namespace RESTApiTODOList
                 app.UseHsts();
             }
 
-            app.UseDefaultFiles();
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
