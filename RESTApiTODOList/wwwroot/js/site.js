@@ -17,10 +17,12 @@ function appendTodos(todos) {
     // get containers from html
     var comboBox = document.getElementById('selectItemsComboBox');
     var mainContainer = document.getElementById("todoContainer");
+    var updatedInput = document.getElementById('updatedNameInput');
 
     // clear it's content
     comboBox.options.length = 0;
     mainContainer.innerHTML = "";
+    updatedInput.value = "";
 
     // go through each retrieved object 
     // create div list for each of them
@@ -36,7 +38,7 @@ function appendTodos(todos) {
         // appending items to the combobox
         var opt = document.createElement('option');
         opt.appendChild(document.createTextNode(todos[i].name));
-        opt.value = 'option value';
+        opt.value = todos[i].id;
         comboBox.appendChild(opt);
     }
 }
@@ -59,6 +61,33 @@ function deleteTodo(id) {
             }
         });
     }  
+}
+
+// PUT
+function updateTodoItem() {
+
+    // retrieve current selected index and entered data
+    var comboBox = document.getElementById('selectItemsComboBox');
+    var selectedTodoItemId = comboBox.options[comboBox.selectedIndex].value;
+    var updatedTodoName = document.getElementById('updatedNameInput').value;
+
+    // create an object to send through ajax POST
+    var todoItemToUpdate = { Id: selectedTodoItemId, Name: updatedTodoName };
+
+    $.ajax({
+        url: "/api/todo",
+        data: JSON.stringify(todoItemToUpdate),
+        type: "POST",
+        method: "PUT",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function () {
+            getTodos();
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });  
 }
 
 // POST

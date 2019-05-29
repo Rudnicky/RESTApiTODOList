@@ -21,7 +21,13 @@
     </form>
 
     <h3>Update TODO</h3>
-    <select id="selectItemsComboBox" />
+    <div id="update-container">
+        <select id="selectItemsComboBox" />
+        <form id="put-todo-form">
+            <input id="updatedNameInput" type="text" name="name" />
+            <input type="submit" value="Update" onclick="updateTodoItem();" />
+        </form>
+    </div>
 
     <script src="js/site.js"></script>
 </body>
