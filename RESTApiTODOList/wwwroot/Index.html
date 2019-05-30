@@ -31,26 +31,46 @@
         </div>
     </div>
 
-    <div>
-        <div id="todoContainer"></div>
+    <div class="row">
+        <div class="col-sm-6">
+            <button type="button" id="addButton"
+                    class="btn btn-primary"
+                    onclick="addClick();">
+                Add Todo
+            </button>
+        </div>
     </div>
 
-    <h3>Add TODO</h3>
-    <form id="add-todo-form">
-        Task
-        <input type="text" name="name" />
-        <input type="submit" value="Submit" />
-    </form>
-
-    <h3>Update TODO</h3>
-    <div id="update-container">
-        <select id="selectItemsComboBox" />
-        <form id="put-todo-form">
-            <input id="updatedNameInput" type="text" name="name" />
-            <input type="submit" value="Update" onclick="updateTodoItem();" />
-        </form>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Todo description
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="todoname">Particular task</label>
+                        <input type="text" id="todoname"
+                               class="form-control" />
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button type="button" id="updateButton"
+                                    class="btn btn-primary"
+                                    onclick="updateClick();">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <input type="hidden" id="todoid" value="0" />
+    
     <script src="js/site.js"></script>
 </body>
 </html>

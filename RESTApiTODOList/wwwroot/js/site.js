@@ -1,48 +1,25 @@
 ﻿
-// GET ALL
+// GET
 function getTodos() {
     $.ajax({
         url: '/api/todo/',
         type: 'GET',
         dataType: 'json',
         success: function (todoItems) {
-            appendTodos(todoItems);
+            todoListSuccess(todoItems);
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
         }
     });
 }
 
-function appendTodos(todos) {
-
-    // get containers from html
-    var comboBox = document.getElementById('selectItemsComboBox');
-    var mainContainer = document.getElementById("todoContainer");
-    var updatedInput = document.getElementById('updatedNameInput');
-
-    // clear it's content
-    comboBox.options.length = 0;
-    mainContainer.innerHTML = "";
-    updatedInput.value = "";
-
-    // go through each retrieved object 
-    // create div list for each of them
-    // and add these objects to combobox
-    for (var i = 0; i < todos.length; i++) {
-
-        // creates divs with btns
-        var div = document.createElement("div");
-        var currentTaskId = todos[i].id;
-        div.innerHTML = 'Task: ' + todos[i].name + '<input type="button" value="X" onClick="deleteTodo(\'' + currentTaskId + '\')" />';
-        mainContainer.appendChild(div);
-
-        // appending items to the combobox
-        var opt = document.createElement('option');
-        opt.appendChild(document.createTextNode(todos[i].name));
-        opt.value = todos[i].id;
-        comboBox.appendChild(opt);
-
-        // temp
-        todoAddRow(todos[i]);
-    }
+function todoListSuccess(todoItems) {
+    // Iterate over the collection of data
+    $.each(todoItems, function (index, todoItem) {
+        // Add a row to the Todo table
+        todoAddRow(todoItem);
+    });
 }
 
 function todoAddRow(todo) {
@@ -64,85 +41,153 @@ function todoBuildTableRow(todo) {
                     "data-id='" + todo.id + "'>" +
                     "<span class='glyphicon glyphicon-edit' />" + "</button>" + "</td >" +
         "<td>" + todo.id + "</td>" +
-        "<td>" + todo.name + "</td>" +
+        "<td>" + todo.name + "</td>" + 
+        "<td>" + "<button type='button' " +
+                "onclick='todoItemDelete(this);' " +
+                "class='btn btn-default' " +
+                "data-id='" + todo.id + "'>" +
+                "<span class='glyphicon glyphicon-remove' />" +
+                "</button>" + "</td>" + 
         "</tr>";
     return ret;
 }
 
-// DELETE 
-function deleteTodo(id) {
-    var ans = confirm("Are you sure you want to delete this Todo item?");
-    if (ans) {
-        $.ajax({
-            url: "/api/todo/" + id,
-            type: "POST",
-            method: "DELETE",
-            contentType: "application/json;charset=UTF-8",
-            dataType: "json",
-            success: function () {
-                getTodos();
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
-            }
-        });
-    }  
+function todoGet(ctl) {
+    // Get todoItem id from data- attribute
+    var id = $(ctl).data("id");
+
+    // Store product id in hidden field
+    $("#todoid").val(id);
+
+    // Call Web API to get a list of Todo(s)
+    $.ajax({
+        url: "/api/todo/" + id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (todoItem) {
+            todoToFields(todoItem);
+
+            // Change Update Button Text
+            $("#updateButton").text("Update");
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
+    });
+}
+
+// DELETE
+function todoItemDelete(ctl) {
+    var id = $(ctl).data("id");
+
+    $.ajax({
+        url: "/api/todo/" + id,
+        type: 'DELETE',
+        success: function (todoItem) {
+            $(ctl).parents("tr").remove();
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
+    });
 }
 
 // PUT
-function updateTodoItem() {
-
-    // retrieve current selected index and entered data
-    var comboBox = document.getElementById('selectItemsComboBox');
-    var selectedTodoItemId = comboBox.options[comboBox.selectedIndex].value;
-    var updatedTodoName = document.getElementById('updatedNameInput').value;
-
-    // create an object to send through ajax POST
-    var todoItemToUpdate = { Id: selectedTodoItemId, Name: updatedTodoName };
-
+function todoUpdate(todoItem) {
     $.ajax({
         url: "/api/todo",
-        data: JSON.stringify(todoItemToUpdate),
-        type: "POST",
-        method: "PUT",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        success: function () {
-            getTodos();
+        type: 'PUT',
+        contentType:
+            "application/json;charset=utf-8",
+        data: JSON.stringify(todoItem),
+        success: function (todoItem) {
+            todoUpdateSuccess(todoItem);
         },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
+        error: function (request, message, error) {
+            handleException(request, message, error);
         }
-    });  
+    });
+}
+
+function updateClick() {
+    var number = document.getElementById("todoid").value;
+    TodoItem = new Object();
+    TodoItem.Id = number;
+    TodoItem.Name = $("#todoname").val();
+    if ($("#updateButton").text().trim() ==
+        "Add") {
+        todoAdd(TodoItem);
+    }
+    else {
+        todoUpdate(TodoItem);
+    }
+}
+
+function todoUpdateSuccess(todoItem) {
+    todoUpdateInTable(todoItem);
+}
+
+function todoUpdateInTable(todoItem) {
+    // Find TodoItem in <table>
+    var row = $("#todoTable button[data-id='" +
+        todoItem.id + "']").parents("tr")[0];
+    // Add changed todoItem to table
+    $(row).after(todoBuildTableRow(todoItem));
+    // Remove original product
+    $(row).remove();
+    formClear(); // Clear form fields
+    // Change Update Button Text
+    $("#updateButton").text("Add");
 }
 
 // POST
-$(function () {
-    $('#add-todo-form').on("submit", function (e) {
-        e.preventDefault(); 
-
-        var todoName = $("[name='name']").val();
-        var dataToPost = { Name: todoName };
-
-        $.ajax(
-            {
-                type: "POST",
-                data: JSON.stringify(dataToPost),
-                url: "/api/todo/",
-                contentType: 'application/json; charset=utf-8',
-                success: function () {
-                    getTodos();
-                },
-                error: function (errormessage) {
-                    alert(errormessage.responseText);
-                }
-            });
+function todoAdd(todoItem) {
+    $.ajax({
+        url: "/api/todo",
+        type: 'POST',
+        contentType:
+            "application/json;charset=utf-8",
+        data: JSON.stringify(todoItem),
+        success: function (todoItem) {
+            todoAddSuccess(todoItem);
+        },
+        error: function (request, message, error) {
+            handleException(request, message, error);
+        }
     });
-});
+}
+
+function todoAddSuccess(todoItem) {
+    todoAddRow(todoItem);
+    formClear();
+}
+
+function formClear() {
+    $("#todoname").val("");
+}
+
+function addClick() {
+    formClear();
+}
+
+function todoToFields(todoItem) {
+    $("#todoname").val(todoItem.name);
+}
+
+function handleException(request, message, error) {
+    var msg = "";
+    msg += "Code: " + request.status + "\n";
+    msg += "Text: " + request.statusText + "\n";
+    if (request.responseJSON != null) {
+        msg += "Message" +
+            request.responseJSON.Message + "\n";
+    }
+    alert(msg);
+}
 
 // this will make getTodos() run once
 // the page is loaded.
 $(document).ready(function () {
-    debugger
+    //debugger
     getTodos();
 });

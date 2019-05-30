@@ -68,6 +68,8 @@ namespace RESTApiTODOList.Controllers
                 {
                     todoItem.Name = item.Name;
                     _todoRepository.Update(todoItem);
+
+                    return Ok(todoItem);
                 }
             }
             return NoContent();
