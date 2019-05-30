@@ -166,10 +166,6 @@ function formClear() {
     $("#todoname").val("");
 }
 
-function addClick() {
-    formClear();
-}
-
 function todoToFields(todoItem) {
     $("#todoname").val(todoItem.name);
 }
